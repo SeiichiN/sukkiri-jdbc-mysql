@@ -120,8 +120,22 @@ ID:EMP002
 年齢:22
 \end{verbatim}
 
+しかし、毎回このオプションを入力するのはとても邪魔くさいので、バッチファイルを作成して、
+ちょっとでも楽をする。
+
+class フォルダにて、``\textsf{run.bat}''というファイルを作成し、内容を以下とする。
+
+\begin{lstlisting}
+ java -cp .;../lib/mysql-connector-java-8.0.21.jar %1
+\end{lstlisting}
+
+そして、classフォルダにてコマンドプロンプトを起動し、以下のようにする。
+
+\begin{tcolorbox}
+ \textgreater run SelectEmployeeSample
+\end{tcolorbox}
 
 
 \include{end}
 
-%% 修正時刻： Sat May  2 16:26:44 2020
+%% 修正時刻： Mon Jul 27 06:45:15 2020

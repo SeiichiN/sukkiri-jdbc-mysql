@@ -15,11 +15,12 @@ public class SelectEmployeeSample {
             System.out.println("年齢:" + String.valueOf(emp.getAge()) + "\n");
         }
 
-        String id = "EMP001";
+        String id = "EMP003";
         if (empDAO.remove(id)) {
             System.out.println(id + "を削除しました。");
         }
     }
 }
 
-// 修正時刻： Wed Jul  8 10:36:08 2020
+// 修正時刻: Mon Jul 27 06:53:59 2020
+

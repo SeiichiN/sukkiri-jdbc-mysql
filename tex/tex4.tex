@@ -192,8 +192,17 @@ mysql> select * from employee;
 
 3つのデータが表示されたあと、``EMP003を削除しました。`` と表示されたら成功である。
 
+前回で作成した ``\textsf{run.bat}'' をここにコピーして使うと楽ができる。
 
+\begin{lstlisting}[caption=run.bat]
+ java -cp .;../lib/mysql-connector-java-8.0.21.jar %1
+\end{lstlisting}
+
+\begin{tcolorbox}
+\verb!> ! run SelectEmployeeSample
+\end{tcolorbox}
 
 \include{end}
 
-%% 修正時刻： Sat May  2 16:26:44 2020
+%% 修正時刻： Mon Jul 27 07:00:25 2020
+

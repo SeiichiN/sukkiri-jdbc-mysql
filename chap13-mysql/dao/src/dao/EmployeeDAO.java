@@ -45,7 +45,7 @@ public class EmployeeDAO {
         try (Connection conn =
              DriverManager.getConnection( JDBC_URL, DB_USER, DB_PASS )) {
 
-            String sql = "delete employee where id = ?";
+            String sql = "delete from employee where id = ?";
             PreparedStatement pStmt = conn.prepareStatement( sql );
             pStmt.setString(1, id);
             int result = pStmt.executeUpdate();
