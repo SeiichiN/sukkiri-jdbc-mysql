@@ -1,0 +1,199 @@
+\documentclass[dvipdfmx]{jsarticle}
+
+\include{begin}
+
+\section{DAOパターンのサンプルプログラム}
+
+本p390 からのサンプルプログラムを書いてみる。
+
+\subsection{プロジェクトフォルダの設定}
+
+先ほど作った ``chap13-mysql'' フォルダの中に ``dao'' というフォルダを作成する。
+
+そして、以下のようにフォルダを作成する。
+
+ \begin{tcolorbox}
+  \begin{verbatim}
+ dao
+├── build.xml 
+├── classes/ 
+├── lib/ 
+│   └── mysql-connector-java-8.0.21.jar 
+└── src/ 
+    ├── SelectEmployeeSample.java 
+    ├── dao/ 
+    │   └── EmployeeDAO.java 
+    └── model/ 
+         └── Employee.java 
+\end{verbatim}
+ \end{tcolorbox}
+
+``build.xml''、``SelectEmployeeSample.java''、``EmployeeDAO.java''、``Employee.java'' は、これから作成するファイルである。
+
+``mysql-connector-java-8.0.21.java'' は、先ほどダウンロードしたファイルである。
+
+
+\subsection{プログラムコードを書く}
+
+\begin{lstlisting}[caption=Employee.java]
+ package model;
+
+ public class Employee {
+   private String id;
+   private String name;
+   private int age;
+  
+   public Employee( String id, String name, int age ) {
+     this.id = id;
+     this.name = name;
+     this.age = age;
+   }
+  
+   public String getId() { return id; }
+   public String getName() { return name; }
+   public int getAge() { return age; }
+ }
+\end{lstlisting}
+
+\begin{lstlisting}[caption=EmployeeDAO.java]
+package dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import model.Employee;
+
+public class EmployeeDAO {
+    private final String JDBC_URL =
+        "jdbc:mysql://localhost:3306/example?serverTimezone=JST";
+    private final String DB_USER = "sa";
+    private final String DB_PASS = "sa";
+
+    /**
+     * 一覧表示メソッド
+     * @Param: none
+     * @Return:
+     *   List<Employee> empList -- Employee型のリスト
+     */
+    public List<Employee> findAll () {
+        List<Employee> empList = new ArrayList <> ();
+
+        try (Connection conn =
+             DriverManager.getConnection( JDBC_URL, DB_USER, DB_PASS )) {
+
+            String sql = "select id, name, age from employee";
+            PreparedStatement pStmt = conn.prepareStatement( sql );
+
+            ResultSet rs = pStmt.executeQuery();
+
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                int age = rs.getInt("age");
+                Employee employee = new Employee( id, name, age );
+                empList.add( employee );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return empList;
+    }
+
+    /**
+     * 削除処理
+     * @Param:
+     *   String id -- ex.EMP001
+     * @Return:
+     *   boolean -- true: 削除成功、  false: 削除失敗l
+     */
+    public boolean remove ( String id ) {
+        try (Connection conn =
+             DriverManager.getConnection( JDBC_URL, DB_USER, DB_PASS )) {
+
+            String sql = "delete from employee where id = ?";
+            PreparedStatement pStmt = conn.prepareStatement( sql );
+            pStmt.setString(1, id);
+            int result = pStmt.executeUpdate();
+            if (result < 1) {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+}
+\end{lstlisting}
+
+削除処理も入れてみた。
+
+\begin{lstlisting}[caption=SelectEmployeeSample.java]
+import java.util.List;
+import model.Employee;
+import dao.EmployeeDAO;
+
+public class SelectEmployeeSample {
+    public static void main( String[] args ) {
+
+        EmployeeDAO empDAO = new EmployeeDAO();
+        List<Employee> empList = empDAO.findAll();
+        
+        // 一覧
+        for (Employee emp : empList) {
+            System.out.println("ID:" + emp.getId());
+            System.out.println("名前:" + emp.getName());
+            System.out.println("年齢:" + String.valueOf(emp.getAge()) + "\n");
+        }
+
+        // 削除
+        String id = "EMP003";
+        if (empDAO.remove(id)) {
+            System.out.println(id + "を削除しました。");
+        }
+    }
+}
+\end{lstlisting}
+
+プロジェクトdaoの先頭でコンパイルをおこなう。そして classes フォルダに移動する。
+
+\begin{tcolorbox}
+\begin{verbatim}
+chap13-mysql\dao> ant
+chap13-mysql\dao> cd classes
+\end{verbatim}
+\end{tcolorbox}
+
+サンプルデータをひとつ増やしておく。
+
+\begin{tcolorbox}
+ \begin{verbatim}
+> mysql -u sa -p example
+Password: **    (sa)
+
+mysql> insert into employee values ('EMP003', '猿飛佐助', 25);
+mysql> select * from employee;
+  ( データの表示 )
+ \end{verbatim}
+\end{tcolorbox}
+
+
+ここで実行する。
+
+\begin{tcolorbox}
+ \verb! classes> java -cp .;../lib/mysql-connector-java-8.0.21.jar SelectEmployeeSample !
+\end{tcolorbox}
+
+3つのデータが表示されたあと、``EMP003を削除しました。`` と表示されたら成功である。
+
+
+
+\include{end}
+
+%% 修正時刻： Sat May  2 16:26:44 2020

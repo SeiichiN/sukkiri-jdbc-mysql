@@ -1,0 +1,127 @@
+\documentclass[dvipdfmx]{jsarticle}
+
+\include{begin}
+
+\section{サンプルプログラム(p383)の作成}
+
+p383に掲載されているサンプルプログラムのMySQL版を書いてみる。
+
+仮にこの本のプログラムコードを入れているフォルダを ''sukkiri'' とする。
+この中に ''chap13-mysql'' というフォルダを作成する。
+このフォルダの中に入り、''terminal'' というフォルダを作成する。
+この中に更に ''src'' と ''classes'' と ''lib'' というフォルダを作成する。
+
+\begin{tcolorbox}
+\begin{verbatim}
+chap13-mysql/
+└── terminal/
+    ├── classes/
+    ├── lib/
+    └── src/
+\end{verbatim}
+\end{tcolorbox}
+
+''chap13-mysql''フォルダには、この章で作成するサーブレットJSPファイルを置く。 \\
+''terminal/src''フォルダには、p383のコードを置く。 \\
+''terminal/classes''フォルダには、p383のコードをコンパイルしてできたclassファイルを置く。 \\
+''terminal/lib'' フォルダには、mysql-connector-java-8.0.21.jaqを置く。 \\
+
+''src''フォルダで以下のコードを書く。
+
+\begin{lstlisting}[caption=src/SelectEmployeeSample.java]
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class SelectEmployeeSample {
+
+  static final String USERNAME = "sa";
+  static final String PASSWORD = "sa";
+  static final String CONNECT =
+               "jdbc:mysql://localhost:3306/example?serverTimezone=JST";
+ 
+  public static void main( String[] args ) {
+    // データベースに接続
+    try (Connection conn =
+       DriverManager.getConnection( CONNECT, USERNAME, PASSWORD )) {
+      // select 文
+      String sql = "select id, name, age from employee";
+      PreparedStatement pStmt = conn.prepareStatement( sql );
+
+      ResultSet rs = pStmt.executeQuery();
+
+      while( rs.next() ) {
+        String id = rs.getString("id");
+        String name = rs.getString("name");
+        int age = rs.getInt("age");
+
+        System.out.println("ID:" + id);
+        System.out.println("名前:" + name);
+        System.out.println("年齢:" + age + "\n");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+}
+\end{lstlisting}
+
+``?serverTimezone=JST'' は、これを書かないと、Timezoneが設定されていないというエラーが出る場合がある(XAMPPの場合?)。
+
+
+''terminal''フォルダにて、次の build.xml を書く。
+
+\begin{lstlisting}[caption=build.xml]
+ <?xml version="1.0" ?>
+<project name="sample" default="compile" basedir=".">
+  <target name="compile">
+    <javac includeAntRuntime="false"
+           srcdir="./src"
+           destdir="./classes"
+           classpath="./lib/mysql-connector-java-8.0.21.jar"
+           />
+  </target>
+</project>
+\end{lstlisting}
+
+コンパイルする。
+
+\begin{tcolorbox}
+\begin{verbatim}
+> ant
+compile:
+
+BUILD SUCCESSFUL
+\end{verbatim}
+\end{tcolorbox}
+
+
+実行する。
+
+\begin{tcolorbox}
+\begin{verbatim}
+> cd classes
+> java -cp .;../lib/mysql-connector-java-8.0.20.jar SelectEmployeeSample
+\end{verbatim}
+\end{tcolorbox}
+
+-cp オプションで、現在のフォルダ「.」と「lib」フォルダのjarファイルを指定している。\\
+mysql-connector-java-8.0.21.jar は、コンパイル時にも、実行時にも、-classpath指定が必要である。
+
+\begin{verbatim}
+ID:EMP001
+名前:湊 雄輔
+年齢:23
+
+ID:EMP002
+名前:綾部 みゆき
+年齢:22
+\end{verbatim}
+
+
+
+\include{end}
+
+%% 修正時刻： Sat May  2 16:26:44 2020

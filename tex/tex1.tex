@@ -1,0 +1,108 @@
+\documentclass[dvipdfmx]{jsarticle}
+
+\include{begin}
+
+\section{JDBCドライバーをインストールする}
+
+JDBCドライバーをWindowsにインストールするのは、ネットで調べてもちょっとわかりにくいかもしれない。
+情報が古いこともある。また、Oracle がWebサイトをけっこう頻繁に模様替えしてるのもある。
+
+\subsection{ダウンロード}
+
+まず、ここにいく。
+
+\href{MySQL Community Downloads}{https://dev.mysql.com/downloads/}
+
+``\textsf{Connector/j}'' をクリックする。
+
+\href{MySQL Community Downloads}{https://dev.mysql.com/downloads/connector/j/} のページに遷移するので、ここのところからインストールするのだが、
+``\textsf{Connector/J 8.0.21}''と書かれているところの
+``\textsf{Select Operating System...}'' には、\textsf{Windows} はない。
+
+Windows は、その下の ``\textsf{MySQL Installer for Windows}'' をインストールして、それを使ってインストールすることになる。
+
+大きなバナーをクリックするか、その下の
+``\textsf{Windows (x86, 32 \& 64-bit), MySQL Installer MSI}'' の横の
+ ``\textsf{Go to Download Page \textgreater}'' をクリックする。
+
+ \href{MySQL Community Downloas/MySQL Installer 8.0.21}{https://dev.mysql.com/downloads/connector/j/}
+ というページが開き、少し下に ``\textsf{MySQL Installer 8.0.21}'' というコラムがある。
+ ``\textsf{Generally Available (GA) Releases}'' とある。
+
+その中に二つの \textsf{Download} ボタンがある。
+
+上は、``\textsf{Windows(x86, 32-bit), MSI Installer 8.0.21 24.5M}'' とある。
+ダウンロードファイルは、``\textsf{mysql-installer-web-community-8.0.21.0.msi}''
+
+下は、``\textsf{Windows(x86, 32-bit), MSI Installer 8.0.21 427.6M}'' とある。
+ダウンロードファイルは、``\textsf{mysql-installer-community-8.0.21.0.msi}''
+
+結論から言うと、下の方をダウンロードしたほうがうまくいった。
+でも、どちらを選んでもできることは同じようである。
+
+
+\subsection{インストール}
+
+上記ファイルをクリックすると、``\textsf{Login Now or Sign Up for a free account}'' とあって、
+ユーザー認証/登録を促される。別に登録してもかまわない。
+
+ここでは、左下の ``\textsf{No thanks, just start my download}'' を選択する。
+
+
+ダウンロードフォルダに ``\textsf{mysql-installer-community-8.0.21.0.msi}'' がダウンロードされる。
+このファイルをダブルクリックして \textsf{インストール} を始める。
+
+「このアプリがデバイスに変更を加えることを許可しますか？」と聞かれるので、「はい」をクリックする。
+
+``\textsf{Choosing a Setup Type}'' のダイアログが開く。ここではインストールするものを選べる。
+通常は、``\textsf{Developer Default}'' を選択するのだが、今回は、「JDBCドライバー」のみ必要なので、
+一番下の``\textsf{Custom}'' を選択して、``\textsf{Next}''。
+
+``\textsf{Select Products and Features}'' のダイアログが開く。
+``\textsf{MySQL Connectors}'' の項目の「＋」をクリックする。
+
+``\textsf{Connector/J}'' － ``\textsf{Connector/J 8.0}'' － ``\textsf{Connector/J 8.0.21-X86}''
+とクリックすると、右側の矢印が緑色に変わるので、その矢印をクリックする。
+
+すると、右側に ``\textsf{Connector/J 8.0.16-X86}'' が表示される。
+``\textsf{Next}'' をクリックする。
+
+``\textsf{Installation}'' のダイアログが開く。
+``\textsf{Connector/J 8.0.21}'' が表示されており、``\textsf{Ready to Install}'' となっている。
+下の ``\textsf{Execute}'' ボタンをクリックする。
+
+``\textsf{Complete}'' となる。 ``\textsf{Next}'' をクリックする。
+
+``\textsf{Installation Complete}'' となり、 ``\textsf{Copy Log to Clipboard}'' ボタンを押しておく。
+``\textsf{Finish}'' ボタンをクリックして終了。
+
+コピーしておいたログをメモ帳などで見てみると、どこにインストールされたかわかるので、のちにクラスパスを指定するときに役立つ。このログは ``\textsf{connector-j.log}'' とでも名前をつけて保存しておく。
+
+\subsection{クラスパスの指定}
+
+たとえば、以下のようにする。
+
+\verb!> set CLASSPATH=.;C:\Program Files (x86)\MySQL\Connector J 8.0\mysql-connector-java-8.0.16.jar!
+
+こののち、コンパイル時にjarファイルも読み込んでくれるようになる。
+
+
+
+\subsection{補足}
+
+MySQL Connector/J 8.0については、以下のように書かれてある。
+
+MySQL Connector/J 8.0 is highly recommended for use with MySQL Server 8.0, 5.7, 5.6, and 5.5. Please upgrade to MySQL Connector/J 8.0.
+(MySQL Connector / J 8.0は、MySQL Server 8.0、5.7、5.6、および5.5で使用することを強くお勧めします。 MySQL Connector / J 8.0にアップグレードしてください。by Google翻訳)
+
+MySQL5.7などでも使えるようである。
+
+
+
+
+
+\include{end}
+
+%% 修正時刻: Sun Jul 26 08:50:43 2020
+
+

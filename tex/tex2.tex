@@ -1,0 +1,134 @@
+\documentclass[dvipdfmx]{jsarticle}
+
+\include{begin}
+
+\section{データを準備する}
+
+p383 のコードを入力する前に、このコードで使っているデータを \textsf{MySQL} で準備しておかなくてはならない。
+
+\subsection{MySQL:ユーザーの作成}
+
+XAMPPなどで、MySQLを動作させておく。
+
+まず、MySQL で使用するユーザーを用意しなくてはならない。
+ROOT のままだと、他のデータベースにもアクセス可能なので、実際にはそのデータベースにのみアクセス権限が与えられているユーザーを作成することになる。しかし今はお試しでプログラムを作成しているので、ユーザー名とパスワードは簡単なものにしておく。
+
+\begin{tcolorbox}
+ ユーザー名: \textsf{sa} \\
+ パスワード: \textsf{sa}
+\end{tcolorbox}
+
+本(p383)ではパスワードは設定されていないが、ユーザー名と同じにしておいたら忘れることはないだろう。
+
+\begin{enumerate}
+ \item MySQLにルートでログインする。\\
+       Windows のコマンドプロンプトで、以下のようにする。\\
+       \verb! > mysql -u root -p ! \\
+       \verb! Password: **** ! \\
+       (多くの場合、パスワードは設定されていないか、もしくはroot である)  \\
+ \item ユーザーを作成する。\\
+       \verb! mysql> create user 'sa'@'localhost' identified by 'sa'; ! \\
+       (ユーザー''sa''を作成し、パスワードを''sa''としている) 
+       \footnote{\' シングルクォーテーションは無くてもいけるみたい。ただし、パスワードにはシングルクォーテーションはあった方がよい。シングルクォーテーションはそれが文字列であることを明示している。}
+       \footnote{localhostの指定を無しにすることもできる。その場合、すべてのホストからそのデータベースに接続できることになる。多くの場合、あるホストで動くプログラムから接続するだけだし、そのプログラムとMySQLは同じホストで動作しているだろうから、ここは localhost という指定があったほうが、セキュリティ上好ましい。} \\
+ \item そのユーザーにこれから作成するデータベースへの権限を与える。 \\
+       \verb! mysql> grant all privileges on example.* to 'sa'@'localhost'; ! \\
+       (データベース名は ``example'' で、それに関連する全てのファイルにアクセス権を与える) \\
+ \item \verb! mysql> quit; ! (MySQLをログアウトする)
+\end{enumerate}
+
+以下のようにすると、ユーザーの作成とデータベースへの権限付与は同時に行うことができる。
+
+\verb! mysql> grant all on example.* 'sa'@'localhost' identified by 'sa'; !
+
+\subsection{MySQLの文字コードの確認}
+
+一応、MySQLの文字コードがどういう設定になっているかを確認しておく。
+インターネットではUTF-8を使うのだが、Windows では Shift-JIS(cp932) だからである。
+
+以下は、XAMPP の場合である。XAMPPをインストールしたときの初期設定である。
+
+\begin{verbatim}
+mysql> show variables like '%char%'; \\
++--------------------------+--------------------------------+
+| Variable_name            | Value                          |
++--------------------------+--------------------------------+
+| character_set_client     | cp932                          |
+| character_set_connection | cp932                          |
+| character_set_database   | utf8mb4                        |
+| character_set_filesystem | binary                         |
+| character_set_results    | cp932                          |
+| character_set_server     | utf8mb4                        |
+| character_set_system     | utf8                           |
+| character_sets_dir       | C:\xampp\mysql\share\charsets\ |
++--------------------------+--------------------------------+
+8 rows in set (0.00 sec)
+\end{verbatim}
+
+
+\subsection{データベースの作成}
+
+先ほど作成したユーザーで MySQL にログインする。
+
+\begin{tcolorbox}
+\verb! > mysql -u sa -p ! \\
+\verb!   Password: ** !   (sa)
+\end{tcolorbox}
+
+データベース(example)を作成する。使用する文字コードも指定しておく。
+\footnote{データベース作成後に文字コードを設定する場合は、
+mysql\textgreater alter database example default character set=utf8; とする。}
+
+\begin{tcolorbox}
+\verb! mysql> create database example default character set=utf8; !
+\end{tcolorbox}
+
+テーブル(employee)を作成する。使用する文字コードも指定しておく。
+\footnote{テーブル作成後に文字コードを設定する場合は、
+mysql\textgreater alter table employee default character set=utf8; } 
+
+\begin{tcolorbox}
+\begin{verbatim}
+mysql> create table employee ( 
+    -> id char(6) not null primary key, 
+    -> name varchar(40), 
+    -> age int ) defalult character set=utf8; 
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection{サンプルデータを入れる}
+
+サンプルデータを入れる。
+データベースアプリを作るときは、最初にサンプルデータを入れておくようにする。
+
+\begin{tcolorbox}
+\begin{verbatim}
+mysql> insert into employee values ( 'EMP001', '湊 雄輔', 23); 
+mysql> insert into employee values ( 'EMP002', '綾部 みゆき', 22) ;
+\end{verbatim}
+\end{tcolorbox}
+
+確認する。
+
+\begin{verbatim}
+mysql> select * from employee;
++--------+----------------+------+
+| id     | name           | age  |
++--------+----------------+------+
+| EMP001 | 湊 雄輔         |   23 |
+| EMP002 | 綾部 みゆき     |   22 |
++--------+----------------+------+
+2 rows in set (0.00 sec)
+\end{verbatim}
+
+データがちゃんと入っている。
+\footnote{Windowsでは文字コードが Shift-JIS なので、漢字がうまく表示できない場合がある。
+そのときは、とりあえずローマ字など英字で入れておく。プログラムを実行したときに
+入力に漢字(UTF-8)が使えればよい。}
+
+
+
+\include{end}
+
+%% 修正時刻: Sun Jul 26 10:21:39 2020
+

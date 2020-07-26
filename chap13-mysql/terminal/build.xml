@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<project name="sample" default="compile" basedir=".">
+  <target name="compile">
+    <javac includeAntRuntime="false"
+           srcdir="./src"
+           destdir="./classes"
+           classpath="./lib/mysql-connector-java-8.0.20.jar" />
+  </target>
+</project>
+

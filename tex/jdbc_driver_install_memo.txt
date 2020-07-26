@@ -1,0 +1,102 @@
+JDBCドライバーをインストールする(Windows)
+
+JDBCドライバーをWindowsにインストールするのにいろいろ手間取ったので、メモしておく。
+
+ちなみに、Ubuntu などでは、debファイルのインストール一発でできるし、CLASSPATHの記述も自動でしてくれる。
+
+Windowsでのやり方は、ネットでもなかなか情報がないので、このやり方がわかるまで、いろいろ試行錯誤した。
+
+!!! ダウンロード
+
+まず、ここにいく。
+
+==[[Download MySQL Installer|https://dev.mysql.com/downloads/windows/installer/8.0.html]]==
+
+[[https://dev.mysql.com/downloads/]]
+
+==ここの「MySQL Connectors」をクリックする。==
+
+==[[MySQL Connectors|https://www.mysql.com/products/connector/]] のページにいろいろとドライバーの一覧がある。==
+
+==このなかの「JDBC Driver for MySQL(Connector/J)」の横の「Download」をクリックする。==
+
+''Connector/j'' をクリックする。
+
+[[MySQL Community Downloads|https://dev.mysql.com/downloads/connector/j/]] のページに遷移するので、ここのところからインストールするのだが、
+''Connector/J 8.0.21''と書かれているところの
+「Select Operating System...」には、「Windows」はない。
+
+Windows は、その下の「MySQL Installer for Windows」をインストールして、それを使ってインストールすることになる。
+
+大きなバナーをクリックするか、その下の
+「Windows (x86, 32 & 64-bit), MySQL Installer MSI」の横の「Go to Download Page > 」をクリックする。
+
+[[MySQL Community Downloas/MySQL Installer 8.0.21|https://dev.mysql.com/downloads/connector/j/]] というページが開き、少し下に 「MySQL Installer 8.0.21」というコラムがある。「Generally Available (GA) Releases」とある。
+
+その中に二つの「Download」ボタンがある。
+
+上は、「Windows(x86, 32-bit), MSI Installer 8.0.21 24.5M」とある。
+ダウンロードファイルは、「mysql-installer-web-community-8.0.21.0.msi」
+
+下は、「Windows(x86, 32-bit), MSI Installer 8.0.21 427.6M」とある。
+ダウンロードファイルは、「mysql-installer-community-8.0.21.0.msi」
+
+結論から言うと、下の方をダウンロードしたほうがうまくいった。でも、どちらを選んでもできることは同じようである。
+
+
+
+!!! インストール
+
+上記ファイルをクリックすると、「Login Now or Sign Up for a free account」とあって、ユーザー認証/登録を
+促される。別に登録してもかまわない。
+
+ここでは、左下の「No thanks, just start my download」を選択する。
+
+
+ダウンロードフォルダに ''mysql-installer-community-8.0.21.0.msi''がダウンロードされる。
+このファイルをダブルクリックして「インストール」を始める。
+
+「このアプリがデバイスに変更を加えることを許可しますか？」と聞かれるので、「はい」をクリックする。
+
+==まず、最初にライセンス条項への同意を求められるので、「I accept the license terms」にチェックを入れて、「Next」とする。==
+
+「Choosing a Setup Type」のダイアログが開く。ここではインストールするものを選べる。
+通常は、「Developer Default」を選択するのだが、今回は、「JDBCドライバー」のみ必要なので、一番下の「Custom」を選択して、「Next」。
+
+「Select Products and Features」のダイアログが開く。
+「MySQL Connectors」の項目の「＋」をクリックする。
+
+「Connector/J」－「Connector/J 8.0」－「Connector/J 8.0.21-X86」とクリックすると、右側の矢印が緑色に変わるので、その矢印をクリックする。
+
+すると、右側に「Connector/J 8.0.16-X86」が表示される。
+「Next」をクリックする。
+
+「Installation」のダイアログが開く。
+「Connector/J 8.0.21」が表示されており、「Ready to Install」となっている。
+下の「Execute」ボタンをクリックする。
+
+「Complete」となる。「Next」をクリックする。
+
+「Installation Complete」となり、「Copy Log to Clipboard」ボタンを押しておく。
+「Finish」ボタンをクリックして終了。
+
+コピーしておいたログをメモ帳などで見てみると、どこにインストールされたかわかるので、のちにクラスパスを指定するときに役立つ。このログは ''connector-j.log'' とでも名前をつけて保存しておく。
+
+!!! クラスパスの指定。
+
+たとえば、以下のようにする。
+
+> set CLASSPATH=.;C:\Program Files (x86)\MySQL\Connector J 8.0\mysql-connector-java-8.0.16.jar
+
+こののち、コンパイル時にjarファイルも読み込んでくれるようになる。
+
+
+
+!!! 補足
+
+MySQL Connector/J 8.0については、以下のように書かれてある。
+
+MySQL Connector/J 8.0 is highly recommended for use with MySQL Server 8.0, 5.7, 5.6, and 5.5. Please upgrade to MySQL Connector/J 8.0.
+
+MySQL5.7などでも使えるようである。
+
