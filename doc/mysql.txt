@@ -1,0 +1,78 @@
+my.ini
+
+=======================================================================
+...(省略)...
+
+[client]
+# password       = your_password 
+port=3306
+socket="C:/xampp/mysql/mysql.sock"
+
+
+# Here follows entries for some specific programs 
+
+# The MySQL server
+# default-character-set=utf8mb4
+default-character-set=cp932
+
+[mysqld]
+...(省略)...
+
+
+## UTF 8 Settings
+#init-connect=\'SET NAMES utf8\'
+#collation_server=utf8_unicode_ci
+#character_set_server=utf8
+#skip-character-set-client-handshake
+character_sets-dir="C:/xampp/mysql/share/charsets"
+sql_mode=NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION
+log_bin_trust_function_creators=1
+
+# character-set-server=utf8mb4
+# collation-server=utf8mb4_general_ci
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+[mysqldump]
+max_allowed_packet=16M
+
+[mysql]
+# Remove the next comment character if you are not familiar with SQL
+#safe-updates
+
+[isamchk]
+key_buffer=20M
+sort_buffer_size=20M
+read_buffer=2M
+write_buffer=2M
+
+[myisamchk]
+key_buffer=20M
+sort_buffer_size=20M
+read_buffer=2M
+write_buffer=2M
+
+[mysqlhotcopy]
+=======================================================================
+
+
+
+
+
+
+
+mysql> show variables like '%char%';
++--------------------------+--------------------------------+
+| Variable_name            | Value                          |
++--------------------------+--------------------------------+
+| character_set_client     | cp932                          |
+| character_set_connection | cp932                          |
+| character_set_database   | utf8                           |
+| character_set_filesystem | binary                         |
+| character_set_results    | cp932                          |
+| character_set_server     | utf8                           |
+| character_set_system     | utf8                           |
+| character_sets_dir       | C:\xampp\mysql\share\charsets\ |
++--------------------------+--------------------------------+
+8 rows in set (0.00 sec)
+

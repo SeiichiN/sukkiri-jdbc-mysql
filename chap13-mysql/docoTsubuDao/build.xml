@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<project name="docoTsubu_dao" default="compile" basedir=".">
+  <target name="compile">
+      <javac includeAntRuntime="false"
+             encoding="UTF-8"
+             srcdir="./src"
+             destdir="./WEB-INF/classes"
+             classpath="C:\pleiades\tomcat\9\lib\servlet-api.jar;
+                        C:\pleiades\tomcat\9\lib\jsp-api.jar;
+      ./WEB-INF/lib/mysql-connector-java-8.0.21.jar" />
+  </target>
+</project>
+
+<!-- 修正時刻： Sat Jul  4 09:19:42 2020 -->

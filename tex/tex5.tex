@@ -1,0 +1,55 @@
+\documentclass[dvipdfmx]{jsarticle}
+
+\include{begin}
+
+\subsection{どこつぶでデータベースを利用する}
+
+MySQLでプログラムで使うためのサンプルデータを作ります。
+
+前回までで ``\textsf{sa}''というユーザーを作成していますので、そのユーザーに、
+これから作成するデータベースについての権限を与えておきます。
+
+\begin{tcolorbox}
+\begin{verbatim}
+> mysql -u root -p
+Password:       (なし)
+
+mysql> grant all privileges on docoTsubu.* to 'sa'@'localhost';
+mysql> quit;
+\end{verbatim}
+\end{tcolorbox}
+
+次に新しいデータベース\textsf{docoTsubu}を作成します。
+
+\begin{tcolorbox}
+\begin{verbatim}
+> mysql -u sa -p
+Password: **      (sa)
+
+mysql> create database docoTsubu default character set=utf8;
+mysql> use docoTsubu;
+mysql> create table mutter (
+    -> id int primary key auto_increment,
+    -> name varchar(100) not null,
+    -> text varchar(255) not null
+    -> ) default character set=utf8;
+mysql> insert into mutter ( name, text ) values ( '湊', '今日は休みだ' ) ;
+mysql> insert into mutter ( name, text ) values ( '綾部', 'いいな?' ) ;
+mysql> select * from mutter;
+
++----+------+--------------+
+| id | name | text         |
++----+------+--------------+
+|  1 | 湊   | 今日は休みだ |
+|  2 | 綾部 | いいな～     |
++----+------+--------------+
+2 rows in set (0.00 sec)
+
+\end{verbatim}
+\end{tcolorbox}
+
+
+
+\include{end}
+
+%% 修正時刻： Mon Jul 27 13:09:35 2020

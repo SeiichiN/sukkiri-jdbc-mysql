@@ -1,0 +1,43 @@
+1: Download of product 'connector-j' started from http://cdn.mysql.com/Downloads/Connector-J/mysql-connector-java-gpl-8.0.21.msi
+1: Download of package 'Connector/J 8.0.21' succeeded
+1: Action 13:39:29: INSTALL. 
+1: 1: MySQL Connector J 2: {D291E445-5955-4748-A3FB-CC61375E798A} 
+1: Action 13:39:29: FindRelatedProducts. Searching for related applications
+1: Action 13:39:29: ValidateProductID. 
+1: Action 13:39:29: CostInitialize. Computing space requirements
+1: Action 13:39:29: FileCost. Computing space requirements
+1: Action 13:39:29: CostFinalize. Computing space requirements
+1: Action 13:39:29: InstallValidate. Validating install
+1: Action 13:39:30: InstallInitialize. 
+1: Action 13:39:30: RemoveExistingProducts. Removing applications
+1: Action 13:39:30: ProcessComponents. Updating component registration
+1: Action 13:39:31: GenerateScript. Generating script operations for action:
+1: Updating component registration
+1: Action 13:39:31: UnpublishFeatures. Unpublishing Product Features
+1: Action 13:39:31: RemoveFiles. Removing files
+1: Action 13:39:31: InstallFiles. Copying new files
+1: File: Copying new files,  Directory: ,  Size: 
+1: Action 13:39:31: RegisterUser. Registering user
+1: Action 13:39:31: RegisterProduct. Registering product
+1: Registering product
+1: Action 13:39:32: PublishFeatures. Publishing Product Features
+1: Feature: Publishing Product Features
+1: Action 13:39:32: PublishProduct. Publishing product information
+1: 
+1: Action 13:39:32: InstallFinalize. 
+1: Action 13:39:32: ProcessComponents. Updating component registration
+1: Action 13:39:32: InstallFiles. Copying new files
+1: File: CHANGES,  Directory: C:\Program Files (x86)\MySQL\Connector J 8.0\,  Size: 265365
+1: File: INFO_BIN,  Directory: C:\Program Files (x86)\MySQL\Connector J 8.0\,  Size: 184
+1: File: INFO_SRC,  Directory: C:\Program Files (x86)\MySQL\Connector J 8.0\,  Size: 135
+1: File: LICENSE,  Directory: C:\Program Files (x86)\MySQL\Connector J 8.0\,  Size: 137805
+1: File: mysql-connector-java-8.0.21.jar,  Directory: C:\Program Files (x86)\MySQL\Connector J 8.0\,  Size: 2397321
+1: File: README,  Directory: C:\Program Files (x86)\MySQL\Connector J 8.0\,  Size: 1266
+1: Action 13:39:32: RegisterProduct. Registering product
+1: {D291E445-5955-4748-A3FB-CC61375E798A}
+1: Action 13:39:32: PublishFeatures. Publishing Product Features
+1: Feature: ProductFeature
+1: Action 13:39:32: PublishProduct. Publishing product information
+1: Action 13:39:33: RollbackCleanup. Removing backup files
+1: 1: MySQL Connector J 2: {D291E445-5955-4748-A3FB-CC61375E798A} 3: 1 
+1: The action 'Install' for product 'Connector/J 8.0.21' completed successfully.

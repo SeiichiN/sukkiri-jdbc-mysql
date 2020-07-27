@@ -2,6 +2,7 @@
 <project name="sample" default="compile" basedir=".">
   <target name="compile">
     <javac includeAntRuntime="false"
+           encoding="UTF-8"
            srcdir="./src"
            destdir="./classes"
            classpath="./lib/mysql-connector-java-8.0.20.jar" />
