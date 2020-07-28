@@ -32,11 +32,9 @@ public class Login extends HttpServlet {
          * LoginLogic.execute
          * user.getPass() == 初期パスワード ==> true
          *      ..        !=       ..       ==> false
-         * LoginLogicクラスの executeメソッドを staticに変えたので、
-         * インスタンス化せずとも使える。
          */
-        // LoginLogic loginLogic = new LoginLogic();
-        boolean isLogin = LoginLogic.execute (user);
+        LoginLogic loginLogic = new LoginLogic();
+        boolean isLogin = loginLogic.execute (user);
 
         if (isLogin) {
             HttpSession session = request.getSession();

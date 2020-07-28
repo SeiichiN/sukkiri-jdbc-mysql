@@ -1,7 +1,7 @@
 package model;
 
 public class LoginLogic {
-    public static boolean execute (User user) {
+    public boolean execute (User user) {
         if (user.getPass().equals("1234")) { return true; }
         return false;
     }

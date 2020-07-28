@@ -12,7 +12,7 @@ import model.Mutter;
 public class MutterDAO {
     // info about database
     private final String JDBC_URL =
-        "jdbc:mysql://localhost:3306/docotsubu?serverTimezone=JST";
+        "jdbc:mysql://localhost:3306/docoTsubu?serverTimezone=JST";
     private final String DB_USER = "sa";
     private final String DB_PASS = "sa";
 
@@ -67,4 +67,7 @@ public class MutterDAO {
 
     }
 }
+
+
+// 修正時刻: Tue Jul 28 05:18:50 2020
 

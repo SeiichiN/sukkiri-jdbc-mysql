@@ -2,12 +2,14 @@
 
 \include{begin}
 
-\subsection{どこつぶでデータベースを利用する}
+\section{どこつぶでデータベースを利用する}
 
-MySQLでプログラムで使うためのサンプルデータを作ります。
+\subsection{サンプルデータの作成}
 
-前回までで ``\textsf{sa}''というユーザーを作成していますので、そのユーザーに、
-これから作成するデータベースについての権限を与えておきます。
+MySQLでプログラムで使うためのサンプルデータを作る。
+
+前回までで ``\textsf{sa}''というユーザーを作成しているので、そのユーザーに、
+これから作成するデータベースについての権限を与えておく。
 
 \begin{tcolorbox}
 \begin{verbatim}
@@ -19,7 +21,7 @@ mysql> quit;
 \end{verbatim}
 \end{tcolorbox}
 
-次に新しいデータベース\textsf{docoTsubu}を作成します。
+次に新しいデータベース \textsf{docoTsubu} を作成する。
 
 \begin{tcolorbox}
 \begin{verbatim}
@@ -44,12 +46,459 @@ mysql> select * from mutter;
 |  2 | 綾部 | いいな～     |
 +----+------+--------------+
 2 rows in set (0.00 sec)
-
 \end{verbatim}
 \end{tcolorbox}
 
+insert文でデータを追加する時、\textsf{id} は \textsf{auto\_increment}
+(自動追加)なので指定しなくてよい。
 
+
+\subsection{プログラムの作成}
+
+フォルダの構成は以下のとおり。
+
+\begin{tcolorbox}
+\begin{verbatim}
+docoTsubuDao/
+├── WEB-INF/
+│   ├── classes/
+│   └── jsp/
+└── src/
+    ├── dao/
+    ├── model/
+    └── servlet/
+\end{verbatim}
+\end{tcolorbox}
+
+''sukkiri''フォルダの中に ''docoTsubuDao''フォルダを作成し、その中に上記のフォルダを
+作成する。
+
+
+p399からのコードを入力していく。
+
+これは本のコードのままである。
+
+\begin{lstlisting}[caption=model/Mutter.java]
+ package model;
+
+ import java.io.Serializable;
+
+ public class Mutter implements Serializable {
+   private int id;
+   private String userName;
+   private String text;
+  
+   public Mutter () {}
+  
+   public Mutter (String userName, String text) {
+     this.userName = userName;
+     this.text = text;
+   }
+  
+   public Mutter (int id, String userName, String text) {
+     this.id = id;
+     this.userName = userName;
+     this.text = text;
+   }
+  
+   public int getId () { return id; }
+   public String getUserName () { return userName; }
+   public STring getText () { return text; }
+ }
+\end{lstlisting}
+
+次のコードは、jdbsドライバを読み込んでいる部分が違うだけで、あとは同じ。
+
+ただ、プログラムがちゃんと動いているかをチェックするためのコードを入れておいた。
+
+\begin{lstlisting}[caption=dao/MutterDAO.java]
+ package dao;
+
+ import java.sql.Connection;
+ import java.sql.DriverManager;
+ import java.sql.PreparedStatement;
+ import java.sql.ResultSet;
+ import java.sql.SQLException;
+ import java.util.ArrayList;
+ import java.util.List;
+ import model.Mutter;
+ 
+ public class MutterDAO {
+   // info about database
+   private final String JDBC_URL =
+       "jdbc:mysql://localhost:3306/docoTsubu?serverTimezone=JST";
+   private final String DB_USER = "sa";
+   private final String DB_PASS = "sa";
+
+   public List<Mutter> findAll () {
+     List<Mutter> mutterList = new ArrayList <> ();
+
+     // connect
+     try (Connection conn =
+         DriverManager.getConnection( JDBC_URL, DB_USER, DB_PASS )) {
+       
+       String sql =
+           "select id, name, text from mutter order by id desc";
+       PreparedStatement pStmt = conn.prepareStatement( sql );
+
+       ResultSet rs = pStmt.executeQuery();
+
+       while (rs.next()) {
+         int id = rs.getInt("id");
+         String userName = rs.getString("name");
+         String text = rs.getString("text");
+         System.out.println("CHECK: " + userName);        // チェック用
+         Mutter mutter = new Mutter( id, userName, text );
+         mutterList.add(mutter);
+       }
+     } catch (SQLException e) {
+       e.printStackTrace();
+       System.out.println("エラーでっせ！");
+       return null;
+     }
+     return mutterList;
+   }
+
+   public boolean create( Mutter mutter ) {
+     try (Connection conn = 
+         DriverManager.getConnection(
+               JDBC_URL, DB_USER, DB_PASS)) {
+       String sql = "insert into mutter( name, text ) values (?, ?)";
+       PreparedStatement pStmt = conn.prepareStatement( sql );
+       pStmt.setString( 1, mutter.getUserName() );
+       pStmt.setString( 2, mutter.getText() );
+
+       // resultには追加された行数が入る
+       int result = pStmt.executeUpdate();
+       if (result != 1) {
+         return false;
+       }
+     } catch (SQLException e) {
+         e.printStackTrace();
+         System.out.println("データの追加失敗");
+       return false;
+     }
+     return true;
+   }
+ }
+ \end{lstlisting}
+
+\begin{lstlisting}[caption=servlet/Main.java]
+ package servlet;
+ 
+ import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+ import javax.servlet.RequestDispatcher;
+ import javax.servlet.ServletContext;
+ import javax.servlet.ServletException;
+ import javax.servlet.annotation.WebServlet;
+ import javax.servlet.http.HttpServlet;
+ import javax.servlet.http.HttpServletRequest;
+ import javax.servlet.http.HttpServletResponse;
+ import javax.servlet.http.HttpSession;
+ 
+ import model.GetMutterListLogic;
+ import model.Mutter;
+ import model.PostMutterLogic;
+ import model.User;
+ 
+ @WebServlet("/Main")
+ public class Main extends HttpServlet {
+   private static final long serialVersionUID = 1L;
+
+   protected void doGet (HttpServletRequest request,
+                         HttpServletResponse response)
+     throws ServletException, IOException {
+
+     // つぶやきリストを取得して、リクエストスコープに保存
+     GetMutterListLogic getMutterListLogic =
+         new GetMutterListLogic();
+     List<Mutter> mutterList = getMutterListLogic.execute();
+     request.setAttribute("mutterList", mutterList);
+     if (mutterList.size() > 0) {
+         System.out.println("空ではない!");
+     }
+
+     // セッションスコープからユーザー情報(loginUser)を取得
+     HttpSession session = request.getSession();
+     User loginUser = (User) session.getAttribute("loginUser");
+
+     if (loginUser == null) {
+         // ユーザー情報が空なら新規作成画面へリダイレクト
+         response.sendRedirect("/docoTsubuDao");
+     } else {
+         RequestDispatcher dispatcher =
+             request.getRequestDispatcher("/WEB-INF/jsp/main.jsp");
+         dispatcher.forward( request, response );
+     }
+   }
+ 
+   @SuppressWarnings("unchecked")
+   public static List<Mutter> automaticCast( Object src ) {
+       List<Mutter> castedObject = (List<Mutter>) src;
+       return castedObject;
+   }
+ 
+   protected void doPost (HttpServletRequest request,
+                          HttpServletResponse response)
+     throws ServletException, IOException {
+
+     request.setCharacterEncoding("UTF-8");
+     String text = request.getParameter("text");
+
+     // check
+     if (text != null && text.length() != 0) {
+
+       // User info
+       HttpSession session = request.getSession();
+       User loginUser = (User) session.getAttribute("loginUser");
+
+       // added Tsubuyaki List
+       Mutter mutter = new Mutter( loginUser.getName(), text );
+       PostMutterLogic postMutterLogic = new PostMutterLogic();
+       postMutterLogic.execute(mutter);
+         
+     } else {
+       // textが 空だった場合
+       request.setAttribute("errorMsg", "つぶやきが入力されていません");
+     }
+
+     GetMutterListLogic getMutterListLogic =
+         new GetMutterListLogic ();
+     List<Mutter> mutterList = getMutterListLogic.execute();
+     request.setAttribute("mutterList", mutterList);
+
+     // forward to main
+     RequestDispatcher dispatcher =
+         request.getRequestDispatcher("/WEB-INF/jsp/main.jsp");
+     dispatcher.forward( request, response );
+   }
+ }
+\end{lstlisting}
+
+\begin{lstlisting}[caption=model/GetMutterListLogic.java]
+ package model;
+
+import java.util.List;
+import dao.MutterDAO;
+
+public class GetMutterListLogic {
+	public List<Mutter> execute () {
+		MutterDAO dao = new MutterDAO ();
+		List<Mutter> mutterList = dao.findAll ();
+		return mutterList;
+	}
+}
+\end{lstlisting}
+
+
+以下は、第11章で作成したものをそのまま使う。
+
+
+\begin{lstlisting}[caption=model/LoginLogic.java]
+ package model;
+
+public class LoginLogic {
+    public boolean execute (User user) {
+        if (user.getPass().equals("1234")) { return true; }
+        return false;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=model/PostMutterLogic.java]
+ package model;
+
+import dao.MutterDAO;
+
+public class PostMutterLogic {
+    public void execute (Mutter mutter) {
+        MutterDAO dao = new MutterDAO();
+        dao.create( mutter );
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=model/User.java]
+ package model;
+
+import java.io.Serializable;
+
+public class User implements Serializable {
+    private String name;
+    private String pass;
+
+    public User () {}
+    public User (String name, String pass) {
+        this.name = name;
+        this.pass = pass;
+    }
+
+    public String getName () { return name; }
+    public String getPass () { return pass; }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=servlet/Login.java]
+ package servlet;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import model.LoginLogic;
+import model.User;
+
+@WebServlet("/Login")
+public class Login extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doPost (HttpServletRequest request,
+                           HttpServletResponse response)
+        throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        String name = request.getParameter("name");
+        String pass = request.getParameter("pass");
+
+        User user = new User (name, pass);
+
+        /**
+         * ログイン処理
+         * LoginLogic.execute
+         * user.getPass() == 初期パスワード ==> true
+         *      ..        !=       ..       ==> false
+         */
+        LoginLogic loginLogic = new LoginLogic();
+        boolean isLogin = loginLogic.execute (user);
+
+        if (isLogin) {
+            HttpSession session = request.getSession();
+            session.setAttribute("loginUser", user);
+        }
+
+        RequestDispatcher dispatcher =
+            request.getRequestDispatcher("/WEB-INF/jsp/loginResult.jsp");
+        dispatcher.forward( request, response );
+    }
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption=servlet/Logout.java]
+ package servlet;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/Logout")
+public class Logout extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doGet( HttpServletRequest request,
+                          HttpServletResponse response )
+        throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+        // セッションスコープの破棄
+        session.invalidate();
+
+        RequestDispatcher dispatcher =
+            request.getRequestDispatcher("/WEB-INF/jsp/logout.jsp");
+        dispatcher.forward( request, response );
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=common.jsp]
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
+<%@ page import="java.util.Date, java.text.SimpleDateFormat" %>
+<% String name = "猿飛佐助"; %>
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption=footer.jsp]
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
+<p>Copyright &copy; どこつぶ制作委員会 All Rights Reserved.</p>
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption=index.jsp]
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
+
+<%@ include file="/common.jsp" %>
+<%
+Date date = new Date();
+SimpleDateFormat sdf = new SimpleDateFormat("YYYY年MM月dd日");
+String today = sdf.format(date);
+%>
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8"/>
+    <title>どこつぶ</title>
+  </head>
+  <body>
+    <h1>どこつぶへようこそ</h1>
+    <time><%= today %></time>
+    <p>管理人:<%= name %></p>
+    <form action="/docoTsubuDao/Login" method="post">
+      ユーザー名:<input type="text" name="name"/><br/>
+      パスワード:<input type="password" name="pass"/><br/>
+      <input type="submit" value="ログイン"/>
+    </form>
+    <jsp:include page="/footer.jsp" /> 
+  </body>
+</html>
+\end{lstlisting}
+
+\subsection{ビルド}
+
+build.xml を以下のようにする。
+
+\begin{lstlisting}
+ <?xml version="1.0" ?>
+<project name="docoTsubu_dao" default="compile" basedir=".">
+  <target name="compile">
+      <javac includeAntRuntime="false"
+             encoding="UTF-8"
+             srcdir="./src"
+             destdir="./WEB-INF/classes"
+             classpath="C:\pleiades\tomcat\9\lib\servlet-api.jar;
+                        C:\pleiades\tomcat\9\lib\jsp-api.jar;
+                        C:\pleiades\tomcat\9\lib\mysql-connector-java-8.0.21.jar"
+             />
+  </target>
+</project>
+\end{lstlisting}
+
+C:/pleiades/tomcat/9/conf/Catalina/localhost のフォルダに以下のように
+ ``\textsf{docoTsubuDao.xml}''を作る。
+
+\begin{lstlisting}[caption=docoTsubuDao.xml]
+<?xml version='1.0' encoding='utf-8'?>
+<Context path="/docoTsubuDao"
+    docBase="C:\Users\user\sukkiri\chap13-mysql\docoTsubuDao" />
+\end{lstlisting}
 
 \include{end}
 
-%% 修正時刻： Mon Jul 27 13:09:35 2020
+%% 修正時刻: Tue Jul 28 08:26:26 2020

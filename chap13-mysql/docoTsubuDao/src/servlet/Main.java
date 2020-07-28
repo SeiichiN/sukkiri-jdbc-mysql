@@ -27,10 +27,13 @@ public class Main extends HttpServlet {
         throws ServletException, IOException {
 
         // つぶやきリストを取得して、リクエストスコープに保存
-        GetMutterListLogic getMutterListLogic =
-            new GetMutterListLogic();
-        List<Mutter> mutterList = getMutterListLogic.execute();
+        // GetMutterListLogic getMutterListLogic =
+        //     new GetMutterListLogic();
+        List<Mutter> mutterList = GetMutterListLogic.execute();
         request.setAttribute("mutterList", mutterList);
+        if (mutterList.size() > 0) {
+            System.out.println("空ではない!");
+        }
 
         // セッションスコープからユーザー情報(loginUser)を取得
         HttpSession session = request.getSession();

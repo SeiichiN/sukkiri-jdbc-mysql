@@ -4,7 +4,7 @@
 <%
 User loginUser = (User) session.getAttribute("loginUser");
 // get Tsubuyaki List
-List<Mutter> mutterList = (List<Mutter>) application.getAttribute("mutterList");
+List<Mutter> mutterList = (List<Mutter>) request.getAttribute("mutterList");
 // get errorMsg
 String errorMsg = (String) request.getAttribute("errorMsg");
 %>
@@ -35,5 +35,5 @@ String errorMsg = (String) request.getAttribute("errorMsg");
   </body>
 </html>
 
-<!-- 修正時刻： Sat Jul  4 09:16:45 2020 -->
+<!-- 修正時刻： Tue Jul 28 05:49:32 2020 -->
 
