@@ -51,7 +51,7 @@ Windows は、その下の ``\textsf{MySQL Installer for Windows}'' をインス
 ここでは、左下の ``\textsf{No thanks, just start my download}'' を選択する。
 
 
-ダウンロードフォルダに ``\textsf{mysql-installer-community-8.0.21.0.msi}'' がダウンロードされる。
+ダウンロードフォルダに ``\textsf{mysql-installer-community-8.0.27.1.msi}'' がダウンロードされる。
 このファイルをダブルクリックして \textsf{インストール} を始める。
 
 「このアプリがデバイスに変更を加えることを許可しますか？」と聞かれるので、「はい」をクリックする。
@@ -63,14 +63,14 @@ Windows は、その下の ``\textsf{MySQL Installer for Windows}'' をインス
 ``\textsf{Select Products and Features}'' のダイアログが開く。
 ``\textsf{MySQL Connectors}'' の項目の「＋」をクリックする。
 
-``\textsf{Connector/J}'' － ``\textsf{Connector/J 8.0}'' － ``\textsf{Connector/J 8.0.21-X86}''
+``\textsf{Connector/J}'' － ``\textsf{Connector/J 8.0}'' － ``\textsf{Connector/J 8.0.27-X86}''
 とクリックすると、右側の矢印が緑色に変わるので、その矢印をクリックする。
 
-すると、右側に ``\textsf{Connector/J 8.0.16-X86}'' が表示される。
+すると、右側に ``\textsf{Connector/J 8.0.27-X86}'' が表示される。
 ``\textsf{Next}'' をクリックする。
 
 ``\textsf{Installation}'' のダイアログが開く。
-``\textsf{Connector/J 8.0.21}'' が表示されており、``\textsf{Ready to Install}'' となっている。
+``\textsf{Connector/J 8.0.27}'' が表示されており、``\textsf{Ready to Install}'' となっている。
 下の ``\textsf{Execute}'' ボタンをクリックする。
 
 ``\textsf{Complete}'' となる。 ``\textsf{Next}'' をクリックする。
@@ -78,16 +78,11 @@ Windows は、その下の ``\textsf{MySQL Installer for Windows}'' をインス
 ``\textsf{Installation Complete}'' となり、 ``\textsf{Copy Log to Clipboard}'' ボタンを押しておく。
 ``\textsf{Finish}'' ボタンをクリックして終了。
 
-コピーしておいたログをメモ帳などで見てみると、どこにインストールされたかわかるので、のちにクラスパスを指定するときに役立つ。このログは ``\textsf{connector-j.log}'' とでも名前をつけて保存しておく。
+コピーしておいたログをメモ帳などで見てみると、どこにインストールされたかわかるので、のちに役立つ。このログは ``\textsf{connector-j.log}'' とでも名前をつけて保存しておく。
 
-\subsection{クラスパスの指定}
+\subsection{jdbcドライバのインストール}
 
-たとえば、以下のようにする。
-
-\verb!> set CLASSPATH=.;C:\Program Files (x86)\MySQL\Connector J 8.0\mysql-connector-java-8.0.16.jar!
-
-こののち、コンパイル時にjarファイルも読み込んでくれるようになる。
-
+このドライバファイルは、Tomcatがインストールされているディレクトリの \textsf{lib} ディレクトリに置く。
 
 
 \subsection{補足}
@@ -105,6 +100,6 @@ MySQL5.7などでも使えるようである。
 
 \include{end}
 
-%% 修正時刻: Thu Dec 23 08:18:31 2021
+%% 修正時刻: Thu Dec 23 21:09:08 2021
 
 

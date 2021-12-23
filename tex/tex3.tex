@@ -6,27 +6,10 @@
 
 p383に掲載されているサンプルプログラムのMySQL版を書いてみる。
 
-仮にこの本のプログラムコードを入れているフォルダを ''sukkiri'' とする。
-この中に ''chap13-mysql'' というフォルダを作成する。
-このフォルダの中に入り、''terminal'' というフォルダを作成する。
-この中に更に ''src'' と ''classes'' と ''lib'' というフォルダを作成する。
-
-\begin{tcolorbox}
-\begin{verbatim}
-chap13-mysql/
-└── terminal/
-    ├── classes/
-    ├── lib/
-    └── src/
-\end{verbatim}
-\end{tcolorbox}
-
-''chap13-mysql''フォルダには、この章で作成するサーブレットJSPファイルを置く。 \\
-''terminal/src''フォルダには、p383のコードを置く。 \\
-''terminal/classes''フォルダには、p383のコードをコンパイルしてできたclassファイルを置く。 \\
-''terminal/lib'' フォルダには、mysql-connector-java-8.0.21.jaqを置く。 \\
+新規動的Webプロジェクトを作成する。プロジェクト名は ``\textsf{mysql}''。
 
 ''src''フォルダで以下のコードを書く。
+パッケージを作るなら ''terminal'' とでもしておく。
 
 \begin{lstlisting}[caption=src/SelectEmployeeSample.java]
 import java.sql.Connection;
@@ -38,9 +21,9 @@ import java.sql.SQLException;
 public class SelectEmployeeSample {
 
   static final String USERNAME = "sa";
-  static final String PASSWORD = "sa";
+  static final String PASSWORD = "";
   static final String CONNECT =
-               "jdbc:mysql://localhost:3306/example?serverTimezone=JST";
+               "jdbc:mysql://localhost:3306/example";
  
   public static void main( String[] args ) {
     // データベースに接続
@@ -68,48 +51,13 @@ public class SelectEmployeeSample {
 }
 \end{lstlisting}
 
-``?serverTimezone=JST'' は、これを書かないと、Timezoneが設定されていないというエラーが出る場合がある(XAMPPの場合?)。
+Timezoneが設定されていないというエラーが出る場合、以下のようにする。\\
+  static final String CONNECT =
+               "jdbc:mysql://localhost:3306/example?serverTimezone=JST";
 
 
-''terminal''フォルダにて、次の build.xml を書く。
-
-\begin{lstlisting}[caption=build.xml]
- <?xml version="1.0" ?>
-<project name="sample" default="compile" basedir=".">
-  <target name="compile">
-    <javac includeAntRuntime="false"
-           srcdir="./src"
-           destdir="./classes"
-           classpath="./lib/mysql-connector-java-8.0.21.jar"
-           />
-  </target>
-</project>
-\end{lstlisting}
-
-コンパイルする。
-
-\begin{tcolorbox}
-\begin{verbatim}
-> ant
-compile:
-
-BUILD SUCCESSFUL
-\end{verbatim}
-\end{tcolorbox}
-
-
-実行する。
-
-\begin{tcolorbox}
-\begin{verbatim}
-> cd classes
-> java -cp .;../lib/mysql-connector-java-8.0.20.jar SelectEmployeeSample
-\end{verbatim}
-\end{tcolorbox}
-
--cp オプションで、現在のフォルダ「.」と「lib」フォルダのjarファイルを指定している。\\
-mysql-connector-java-8.0.21.jar は、コンパイル時にも、実行時にも、-classpath指定が必要である。
-
+これを 実行 -- Javaアプリケーション とすると、以下のように出力される。
+               
 \begin{verbatim}
 ID:EMP001
 名前:湊 雄輔
@@ -120,22 +68,8 @@ ID:EMP002
 年齢:22
 \end{verbatim}
 
-しかし、毎回このオプションを入力するのはとても邪魔くさいので、バッチファイルを作成して、
-ちょっとでも楽をする。
-
-class フォルダにて、``\textsf{run.bat}''というファイルを作成し、内容を以下とする。
-
-\begin{lstlisting}
- java -cp .;../lib/mysql-connector-java-8.0.21.jar %1
-\end{lstlisting}
-
-そして、classフォルダにてコマンドプロンプトを起動し、以下のようにする。
-
-\begin{tcolorbox}
- \textgreater run SelectEmployeeSample
-\end{tcolorbox}
 
 
 \include{end}
 
-%% 修正時刻： Mon Jul 27 06:45:15 2020
+%% 修正時刻： Thu Dec 23 21:19:31 2021

@@ -15,55 +15,31 @@ ROOT のままだと、他のデータベースにもアクセス可能なので
 
 \begin{tcolorbox}
  ユーザー名: \textsf{sa} \\
- パスワード: \textsf{sa}
+ パスワード: (なし)
 \end{tcolorbox}
 
-本(p383)ではパスワードは設定されていないが、ユーザー名と同じにしておいたら忘れることはないだろう。
+本(p383)ではパスワードは設定されていないので、同じようにしておく。
 
 \begin{enumerate}
  \item MySQLにルートでログインする。\\
        Windows のコマンドプロンプトで、以下のようにする。\\
-       \verb! > mysql -u root -p ! \\
-       \verb! Password: **** ! \\
-       (多くの場合、パスワードは設定されていないか、もしくはroot である)  \\
+       \quad \verb! > mysql -u root -p ! \\
+       \quad \verb! Password: **** ! \\
+       (多くの場合、パスワードは設定されていないか、もしくはroot である) \\
  \item ユーザーを作成する。\\
-       \verb! mysql> create user 'sa'@'localhost' identified by 'sa'; ! \\
-       (ユーザー''sa''を作成し、パスワードを''sa''としている) 
-       \footnote{\' シングルクォーテーションは無くてもいけるみたい。ただし、パスワードにはシングルクォーテーションはあった方がよい。シングルクォーテーションはそれが文字列であることを明示している。}
-       \footnote{localhostの指定を無しにすることもできる。その場合、すべてのホストからそのデータベースに接続できることになる。多くの場合、あるホストで動くプログラムから接続するだけだし、そのプログラムとMySQLは同じホストで動作しているだろうから、ここは localhost という指定があったほうが、セキュリティ上好ましい。} \\
+       \quad \verb! mysql> create user 'sa'@'localhost' identified by ''; ! \\
+       (ユーザー''sa''を作成し、パスワードを''''としている) \\
  \item そのユーザーにこれから作成するデータベースへの権限を与える。 \\
-       \verb! mysql> grant all privileges on example.* to 'sa'@'localhost'; ! \\
+       \quad \verb! mysql> grant all on example.* to 'sa'@'localhost'; ! \\
        (データベース名は ``example'' で、それに関連する全てのファイルにアクセス権を与える) \\
- \item \verb! mysql> quit; ! (MySQLをログアウトする)
+ \item  MySQLをログアウトする \\
+       \quad  \verb! mysql> quit; !
 \end{enumerate}
 
 以下のようにすると、ユーザーの作成とデータベースへの権限付与は同時に行うことができる。
 
-\verb! mysql> grant all on example.* 'sa'@'localhost' identified by 'sa'; !
+\quad \verb! mysql> grant all on example.* 'sa'@'localhost' identified by ''; !
 
-\subsection{MySQLの文字コードの確認}
-
-一応、MySQLの文字コードがどういう設定になっているかを確認しておく。
-インターネットではUTF-8を使うのだが、Windows では Shift-JIS(cp932) だからである。
-
-以下は、XAMPP の場合である。XAMPPをインストールしたときの初期設定である。
-
-\begin{verbatim}
-mysql> show variables like '%char%'; \\
-+--------------------------+--------------------------------+
-| Variable_name            | Value                          |
-+--------------------------+--------------------------------+
-| character_set_client     | cp932                          |
-| character_set_connection | cp932                          |
-| character_set_database   | utf8mb4                        |
-| character_set_filesystem | binary                         |
-| character_set_results    | cp932                          |
-| character_set_server     | utf8mb4                        |
-| character_set_system     | utf8                           |
-| character_sets_dir       | C:\xampp\mysql\share\charsets\ |
-+--------------------------+--------------------------------+
-8 rows in set (0.00 sec)
-\end{verbatim}
 
 
 \subsection{データベースの作成}
@@ -72,27 +48,23 @@ mysql> show variables like '%char%'; \\
 
 \begin{tcolorbox}
 \verb! > mysql -u sa -p ! \\
-\verb!   Password: ** !   (sa)
+\verb!   Password: !   (そのままEnter)
 \end{tcolorbox}
 
-データベース(example)を作成する。使用する文字コードも指定しておく。
-\footnote{データベース作成後に文字コードを設定する場合は、
-mysql\textgreater alter database example default character set=utf8; とする。}
+データベース(example)を作成する。
 
 \begin{tcolorbox}
-\verb! mysql> create database example default character set=utf8; !
+\verb! mysql> create database example ; !
 \end{tcolorbox}
 
-テーブル(employee)を作成する。使用する文字コードも指定しておく。
-\footnote{テーブル作成後に文字コードを設定する場合は、
-mysql\textgreater alter table employee default character set=utf8; } 
+テーブル(employee)を作成する。
 
 \begin{tcolorbox}
 \begin{verbatim}
 mysql> create table employee ( 
-    -> id char(6) not null primary key, 
-    -> name varchar(40), 
-    -> age int ) defalult character set=utf8; 
+    -> id char(6) primary key, 
+    -> name varchar(100) not null, 
+    -> age int not null) ;
 \end{verbatim}
 \end{tcolorbox}
 
@@ -130,5 +102,5 @@ mysql> select * from employee;
 
 \include{end}
 
-%% 修正時刻: Sun Jul 26 10:21:39 2020
+%% 修正時刻: Thu Dec 23 21:48:08 2021
 
