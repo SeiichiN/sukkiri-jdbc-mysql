@@ -26,13 +26,18 @@ public class SelectEmployeeSample {
                "jdbc:mysql://localhost:3306/example";
  
   public static void main( String[] args ) {
+    // MySQLドライバーをDriverManagerに登録
+    try {
+      Class.forName("com.mysql.cj.jdbc.Driver");
+    } catch (ClassNotFoundException e) {
+      throw new IllegalStateException("ドライバーが見つかりません");
+    }
     // データベースに接続
     try (Connection conn =
        DriverManager.getConnection( CONNECT, USERNAME, PASSWORD )) {
       // select 文
-      String sql = "select id, name, age from employee";
+      String sql = "SELECT id, name, age FROM employee";
       PreparedStatement pStmt = conn.prepareStatement( sql );
-
       ResultSet rs = pStmt.executeQuery();
 
       while( rs.next() ) {
@@ -72,4 +77,4 @@ ID:EMP002
 
 \include{end}
 
-%% 修正時刻： Thu Dec 23 21:19:31 2021
+%% 修正時刻： Sat 2023/12/30 06:09:441
