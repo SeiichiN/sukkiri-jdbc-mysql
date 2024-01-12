@@ -20,9 +20,9 @@ import java.sql.SQLException;
 
 public class SelectEmployeeSample {
 
-  static final String USERNAME = "sa";
-  static final String PASSWORD = "";
-  static final String CONNECT =
+  private final String USERNAME = "sa";
+  private final String PASSWORD = "";
+  private final String CONNECT =
                "jdbc:mysql://localhost:3306/example";
  
   public static void main( String[] args ) {
@@ -36,7 +36,7 @@ public class SelectEmployeeSample {
     try (Connection conn =
        DriverManager.getConnection( CONNECT, USERNAME, PASSWORD )) {
       // select 文
-      String sql = "SELECT id, name, age FROM employee";
+      String sql = "SELECT id, name, age FROM employees";
       PreparedStatement pStmt = conn.prepareStatement( sql );
       ResultSet rs = pStmt.executeQuery();
 
@@ -61,7 +61,7 @@ Timezoneが設定されていないというエラーが出る場合、以下の
                "jdbc:mysql://localhost:3306/example?serverTimezone=JST";
 
 
-これを 実行 -- Javaアプリケーション とすると、以下のように出力される。
+これを \fbox{実行} --- \fbox{Javaアプリケーション} とすると、以下のように出力される。
                
 \begin{verbatim}
 ID:EMP001
@@ -77,4 +77,4 @@ ID:EMP002
 
 \include{end}
 
-%% 修正時刻： Sat 2023/12/30 06:09:441
+%% 修正時刻： Sat 2024/01/13 05:56:141

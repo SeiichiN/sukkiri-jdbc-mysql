@@ -61,7 +61,7 @@ ROOT のままだと、他のデータベースにもアクセス可能なので
 
 \begin{tcolorbox}
 \begin{verbatim}
-mysql> create table employee ( 
+mysql> create table employees ( 
     -> id char(6) primary key, 
     -> name varchar(100) not null, 
     -> age int not null) ;
@@ -75,15 +75,15 @@ mysql> create table employee (
 
 \begin{tcolorbox}
 \begin{verbatim}
-mysql> insert into employee values ( 'EMP001', '湊 雄輔', 23); 
-mysql> insert into employee values ( 'EMP002', '綾部 みゆき', 22) ;
+mysql> insert into employees values ( 'EMP001', '湊 雄輔', 23); 
+mysql> insert into employees values ( 'EMP002', '綾部 みゆき', 22) ;
 \end{verbatim}
 \end{tcolorbox}
 
 確認する。
 
 \begin{verbatim}
-mysql> select * from employee;
+mysql> select * from employees;
 +--------+----------------+------+
 | id     | name           | age  |
 +--------+----------------+------+
@@ -102,5 +102,5 @@ mysql> select * from employee;
 
 \include{end}
 
-%% 修正時刻: Thu Dec 23 21:48:08 2021
+%% 修正時刻: Sat 2024/01/13 05:56:141
 
